@@ -1,0 +1,81 @@
+networks:
+    tapis:
+        name: tapis
+        external: true
+
+services:
+  authenticator-api: 
+    container_name: authenticator-api
+    image: tapis/authenticator:1.6.2
+    networks:
+        - tapis
+    env_file:
+        - /home/rocky/tapisrc1-primary-data/authenticator/env
+    volumes:
+        - ./authenticator-config.json:/home/tapis/config.json
+    depends_on: 
+        authenticator-postgres:
+            condition: service_healthy
+        authenticator-ldap:
+            condition: service_started
+        authenticator-migrations:
+            condition: service_completed_successfully
+
+
+  authenticator-postgres:
+    container_name: authenticator-postgres
+    image: postgres:11.4
+    networks:
+        - tapis
+    environment:
+        - PGDATA=/pgdata/data
+        - POSTGRES_USER=authenticator
+        - POSTGRES_DB=authenticator
+        - POSTGRES_HOST_AUTH_METHOD=trust
+    env_file:
+        - /home/rocky/tapisrc1-primary-data/authenticator/env
+    volumes:
+        - /home/rocky/tapisrc1-primary-data/authenticator/postgres:/pgdata
+    healthcheck:
+        test: pg_isready -U authenticator
+
+
+  authenticator-migrations:
+    container_name: authenticator-migrations
+    image: tapis/authenticator-migrations:1.6.2
+    networks:
+        - tapis
+    env_file:
+        - /home/rocky/tapisrc1-primary-data/authenticator/env
+    depends_on:
+        authenticator-postgres:
+            condition: service_healthy
+        authenticator-ldap:
+            condition: service_started
+    command: ['upgrade']
+    volumes:
+        - ./authenticator-config.json:/home/tapis/config.json
+        
+        
+  authenticator-ldap:
+    container_name: authenticator-ldap
+    image: tacc/slapd:1
+    networks:
+        - tapis
+    environment:
+        - LDAP_DOMAIN=tapis
+        - LDAP_ORGANISATION=Tapis
+    env_file:
+        - /home/rocky/tapisrc1-primary-data/authenticator/env
+    volumes:
+        - /home/rocky/tapisrc1-primary-data/authenticator/ldap:/data/ldap
+    depends_on:
+        authenticator-postgres:
+            condition: service_healthy
+    ulimits:
+        nofile:
+            soft: 1024
+            hard: 4096
+    healthcheck:
+        test: slapcat
+

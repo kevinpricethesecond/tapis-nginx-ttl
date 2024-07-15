@@ -1,0 +1,11 @@
+{
+  "primary_site_admin_tenant_base_url": "https://admin.rc1.tapis.io",
+  "service_site_id": "tacc",
+  "service_tenant_id": "admin",
+  "service_name": "tenants",
+  "postgres_user": "tenants",
+  "tenants": ["*"],
+  "use_sk": true,
+  "show_traceback": false,
+  "log_level": "INFO"
+}

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo "burnup meta:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/meta/mongodb/data
+
+python3 ../admin/util/parse_skexport -c meta -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d
+

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "burndown tapisui:"
+
+docker compose down

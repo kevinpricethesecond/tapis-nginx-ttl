@@ -1,0 +1,64 @@
+
+networks:
+    tapis:
+        name: tapis
+        external: true
+
+
+services:
+  restheart:
+    image: tapis/tapis-meta-rh-server:1.6.1
+    container_name: restheart
+    command: [ "java", "-Dfile.encoding=UTF-8", "-server", "-jar", "restheart.jar", "etc/restheart.yml", "--envFile", "etc/config.properties"]
+    networks: 
+      - tapis
+    volumes:
+      - ./meta-config.yml:/opt/restheart/etc/config.properties
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/meta/env
+
+  restheart-security:
+    image: tapis/metaapi:1.6.1
+    container_name: restheart-security
+    networks:
+      - tapis
+    environment:
+      - TAPIS_SITE_ID=tacc
+      - TAPIS_META_SERVICE_TENANT_BASE_URL=https://admin.rc1.tapis.io/
+      - TAPIS_META_SERVICE_SK_SVC_URL=https://admin.rc1.tapis.io/v3
+      - TAPIS_META_SERVICE_TOKEN_BASE_URL=https://admin.rc1.tapis.io/
+      - TAPIS_META_CORE_SERVER=http://restheart:8080/
+      - CATALINA_OPTS=-Dlogback.configurationFile=/usr/local/tomcat/etc/logback.xml --add-opens java.base/java.time=ALL-UNNAMED
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/meta/env
+
+
+  restheart-mongo:
+    image: tapis/mongo-singlenode:1.6.0
+    container_name: restheart-mongo
+    hostname: restheart-mongo
+    networks: 
+      - tapis
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=restheart
+      - MONGO_REPLICA_SET_NAME=rs0
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/meta/env
+    volumes:
+      -  /home/rocky/tapisrc1-primary-data/meta/mongodb/data:/data/db
+      - ./initdb.sh:/home/tapis/initdb.sh
+      - ./initdb.py:/home/tapis/initdb/py
+    entrypoint: 
+      - bash
+      - -c
+      - |
+        cp /keyfiles/metakeyfile /keyfiles/keyfile-to-use
+        chmod 400 /keyfiles/keyfile-to-use
+        chown 999:999 /keyfiles/keyfile-to-use
+        exec docker-entrypoint.sh $$@
+    command: "mongod --bind_ip_all --replSet rs0 --keyFile /keyfiles/keyfile-to-use"
+    healthcheck:
+      test: mongo -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --eval 'rs.initiate()'
+      interval: 10s
+      start_period: 30s
+    

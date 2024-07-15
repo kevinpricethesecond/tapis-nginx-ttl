@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source functions
+gettoken
+
+echo "hello"
+curl -s https://dev.rc1.tapis.io/v3/security/hello | jq .status
+echo
+
+echo "ready"
+curl -s https://dev.rc1.tapis.io/v3/security/ready | jq .status
+echo
+
+echo "healthcheck"
+curl -s https://dev.rc1.tapis.io/v3/security/healthcheck | jq .status
+echo

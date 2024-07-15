@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "burnup tapisui:"
+
+# mkdir -p /home/rocky/tapisrc1-primary-data/tapisui
+# MYUID=`id -u`
+# docker run -it --rm -v /home/rocky/tapisrc1-primary-data/tapisui:/tapisui tapis/ubutil2204:1.4.0 chown $MYUID /tapisui
+
+# python3 ../admin/util/parse_skexport -c tapisui -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d

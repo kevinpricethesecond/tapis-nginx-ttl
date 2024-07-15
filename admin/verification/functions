@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# tapis verification functions
+
+### vars
+
+VAULTURL="http://vault:8200"
+SERVICEURL="https://admin.rc1.tapis.io"
+
+### util
+
+gettoken(){
+  tok=$(curl -d '{"username": "testuser2", "password": "testuser2", "grant_type": "password"}' -H "Content-type: application/json"  https://dev.rc1.tapis.io/v3/oauth2/tokens | jq -r .result.access_token.access_token)
+}
+
+### checks
+
+checkcert(){
+  # will not work until nginx is up
+  echo "checking cert: $1"
+  echo test | openssl s_client -showcerts -connect $1:443
+}
+
+curlurl(){
+  # will not work until nginx is up
+  u="https://$1"
+  echo "curling url: $u"
+  curl -k $u
+}
+
+pingsite(){
+  echo "pinging url: $1"
+  ping -c 1 -W 5 $1
+}
+
+preflight_check(){
+  getconfig
+  echo "site: $SERVICEURL"
+  pingsite $SERVICEURL
+}
+
+postnginx_check(){
+  curlurl $SERVICEURL
+  checkcert $SERVICEURL
+}
+
+

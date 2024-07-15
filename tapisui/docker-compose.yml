@@ -1,0 +1,11 @@
+networks:
+    tapis:
+        name: tapis
+        external: true
+
+services:
+    tapisui:
+        container_name: tapisui
+        image: tapis/tapisui:1.6.0
+        environment:
+            - LOG_LEVEL=INFO

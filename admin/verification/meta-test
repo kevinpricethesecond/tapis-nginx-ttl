@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+source functions
+gettoken
+
+curl -H X-Tapis-Token:$tok https://dev.rc1.tapis.io/v3/meta/hello 
+
+
+curl https://dev.rc1.tapis.io/v3/meta/ready

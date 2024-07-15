@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "burnup globus-proxy:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/globus-proxy
+
+docker compose up -d
+

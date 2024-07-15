@@ -1,0 +1,102 @@
+#!/bin/bash
+
+
+# global Tapis burndown script
+
+# Helps run all the components in the correct order
+
+# sorting out some script coordinates
+mydir_absolute=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+myscript_nameonly="$( basename -- "${BASH_SOURCE[0]}" )"
+myscript_absolute="$mydir_absolute/$myscript_nameonly"
+
+# uncomment for debug 
+#echo $mydir_absolute
+#echo $myscript_nameonly
+#echo $myscript_absolute
+
+# burn down in reverse order
+echo "Start: top-level-burndown"
+
+### tertiary services
+
+# actors
+
+cd $mydir_absolute/actors
+./burndown
+
+
+# container-registry
+
+# globus-proxy
+
+cd $mydir_absolute/globus-proxy
+./burndown
+
+
+cd $mydir_absolute/meta
+./burndown
+
+# monitoring
+
+cd $mydir_absolute/notifications
+./burndown
+
+# pgrest
+
+# pgrest-a2cps-dev
+
+# pgrest-a2cps-prod
+
+# pods
+
+cd $mydir_absolute/streams
+./burndown streams
+
+cd $mydir_absolute/tapisui
+./burndown
+
+# workflows
+
+### secondary services
+
+cd $mydir_absolute/jobs
+./burndown
+
+cd $mydir_absolute/files
+./burndown
+
+cd $mydir_absolute/systems
+./burndown
+
+cd $mydir_absolute/apps
+./burndown
+
+### primary services
+
+cd $mydir_absolute/tenants
+./burndown
+
+cd $mydir_absolute/security
+./burndown
+
+cd $mydir_absolute/tokens
+./burndown
+
+cd $mydir_absolute/authenticator
+./burndown
+
+### init
+
+# # cd $mydir_absolute/skadmin
+# ./burndown
+# 
+cd $mydir_absolute/vault
+./burndown
+
+cd $mydir_absolute/proxy
+./burndown
+
+echo "Done: top-level-burndown"
+
+exit 0

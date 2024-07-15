@@ -1,0 +1,63 @@
+---
+
+networks:
+  tapis:
+    name: tapis
+    external: true
+
+services:
+
+  tenants-postgres:
+    container_name: tenants-postgres
+    image: postgres:11.4
+    volumes:
+      - /home/rocky/tapisrc1-primary-data/tenants/postgres:/pgdata
+      - ./tenants-config.json:/home/tapis/config.json
+    networks:
+      - tapis
+    environment:
+      #- POSTGRES_HOST_AUTH_METHOD=trust
+      - PGDATA=/pgdata/data
+      - POSTGRES_USER=tenants
+      - POSTGRES_DB=tenants
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/tenants/env
+    healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+
+  tenants-migrations:
+    container_name: tenants-migrations
+    image: tapis/tenants-api-migrations:1.6.0
+    volumes:
+      - ./tenants-config.json:/home/tapis/config.json
+    networks:
+      - tapis
+    depends_on:
+      tenants-postgres:
+        condition: service_healthy
+    environment: 
+      - sql_db_url=tenants-postgres:5432/tenants 
+      - postgres_user=tenants 
+      - postgres_database=tenants
+    env_file: 
+      - /home/rocky/tapisrc1-primary-data/tenants/env
+    command: ['upgrade']
+
+  tenants-api:
+    container_name: tenants-api
+    image: tapis/tenants-api:1.6.0
+    volumes:
+      - ./tenants-config.json:/home/tapis/config.json
+    networks:
+      - tapis
+    environment:
+      - sql_db_url=tenants-postgres:5432/tenants
+      - postgres_user=tenants
+      - postgres_database=tenants
+    env_file: 
+      - /home/rocky/tapisrc1-primary-data/tenants/env
+    depends_on:
+      tenants-migrations:
+        condition: service_completed_successfully
+      tenants-postgres:
+        condition: service_healthy

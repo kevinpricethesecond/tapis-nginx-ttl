@@ -1,0 +1,77 @@
+
+networks:
+    tapis:
+        name: tapis
+        external: true
+    
+
+services:
+    sk-postgres:
+        container_name: sk-postgres
+        image: postgres:12.4
+        networks:
+            - tapis
+        volumes:
+            - /home/rocky/tapisrc1-primary-data/security/postgres:/pgdata
+        environment:
+            - PGDATA=/pgdata/data
+        env_file:
+            - /home/rocky/tapisrc1-primary-data/security/env
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+
+# Do not start pgadmin by default 
+#    sk-pgadmin:
+#        container_name: sk-pgadmin
+#        image: dpage/pgadmin4:6.20
+#        environment:
+#            - PGADMIN_DEFAULT_EMAIL=wow@example.com
+#            - PGADMIN_DEFAULT_PASSWORD=password
+#        env_file:
+#            - /home/rocky/tapisrc1-primary-data/security/env
+#        networks:
+#            - tapis
+
+    security-migrations:
+        container_name: security-migrations
+        environment:
+            - HOST=sk-postgres
+            - PORT=5432 
+            - USER=postgres
+        image: tapis/securitymigrate:1.6.2
+        env_file:
+            - /home/rocky/tapisrc1-primary-data/security/env
+        networks:
+            - tapis
+        depends_on:
+            sk-postgres:
+                condition: service_healthy
+
+
+    security-api:
+        container_name: security-api
+        image: tapis/securityapi:1.6.2
+        environment:
+            - TAPIS_SITE_ID=tacc
+            - TAPIS_TENANT_SVC_BASEURL=https://admin.rc1.tapis.io
+            - TAPIS_SK_VAULT_DISABLE=false 
+            - TAPIS_SK_VAULT_ADDRESS=http://vault:8200
+            - TAPIS_DB_CONNECTION_POOL_SIZE=10
+            - TAPIS_DB_USER=tapis
+            - TAPIS_DB_JDBC_URL=jdbc:postgresql://sk-postgres:5432/tapissecdb
+            - TAPIS_REQUEST_LOGGING_FILTER_PREFIXES=/v3/security
+            - TAPIS_REQUEST_LOGGING_IGNORE_SUFFIXES="/healthcheck;/ready;/hello"
+            - TAPIS_LOG_DIRECTORY=/opt/tomcat/logs
+            - CATALINA_OPTS=-Xms3G -Xmx3G --add-opens java.base/java.time=ALL-UNNAMED
+        env_file:
+            - /home/rocky/tapisrc1-primary-data/security/env
+        networks:
+            - tapis
+        depends_on:
+            sk-postgres:
+                condition: service_started
+            security-migrations:
+                condition: service_completed_successfully
+
+
+

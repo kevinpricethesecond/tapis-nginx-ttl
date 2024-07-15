@@ -1,0 +1,8 @@
+{
+	"primary_site_admin_tenant_base_url": "https://admin.rc1.tapis.io",
+    "service_site_id": "tacc",
+    "service_tenant_id": "admin",
+    "service_name": "proxy",
+    "tenants": ["*"],
+    "redis_host": "site-router-redis"
+}

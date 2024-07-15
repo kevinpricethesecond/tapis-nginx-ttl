@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "burnup proxy:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/proxy
+mkdir -p /home/rocky/tapisrc1-primary-data/proxy/proxy-site-router-redis
+
+docker compose up -d
+

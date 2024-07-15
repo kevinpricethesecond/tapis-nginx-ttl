@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "burnup jobs:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/jobs
+mkdir -p /home/rocky/tapisrc1-primary-data/jobs/postgres
+
+python3 ../admin/util/parse_skexport -c jobs -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d
+

@@ -1,0 +1,104 @@
+#!/bin/bash
+
+set -e 
+
+# global Tapis burnup script
+
+# Helps run all the components in the correct order
+
+# sorting out some script coordinates
+mydir_absolute=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+myscript_nameonly="$( basename -- "${BASH_SOURCE[0]}" )"
+myscript_absolute="$mydir_absolute/$myscript_nameonly"
+
+# uncomment for debug 
+#echo $mydir_absolute
+#echo $myscript_nameonly
+#echo $myscript_absolute
+
+
+burnup_or_exit () {
+  echo "Burnup: $1" 
+  cd $mydir_absolute/$1 || exit 1
+  ./burnup || exit 1
+  cd $mydir_absolute || exit 1
+  echo "Done: $1" 
+  return 0
+}
+
+
+echo "Start: top-level-burnup"
+
+mkdir -p /home/rocky/tapisrc1-primary-data
+
+### Docker-specific setup 
+if ! docker network inspect tapis >& /dev/null
+then 
+  echo "Creating docker tapis network:"
+  docker network create tapis 
+fi
+
+
+### init / setup
+
+burnup_or_exit proxy
+
+burnup_or_exit vault
+
+burnup_or_exit skadmin
+
+
+### primary services
+
+burnup_or_exit tenants
+
+burnup_or_exit security
+
+burnup_or_exit tokens
+
+burnup_or_exit authenticator
+
+
+### secondary services
+
+burnup_or_exit notifications
+
+burnup_or_exit jobs  
+
+burnup_or_exit files
+
+burnup_or_exit systems
+
+burnup_or_exit apps
+
+## tertiary services
+
+burnup_or_exit actors
+
+# container-registry
+
+# globus-proxy
+
+burnup_or_exit globus-proxy
+
+burnup_or_exit meta
+
+# monitoring
+
+# pgrest
+
+# pgrest-a2cps-dev
+
+# pgrest-a2cps-prod
+
+# pods
+
+burnup_or_exit streams
+
+burnup_or_exit tapisui
+
+# workflows
+
+echo "Done: top-level-burnup"
+
+exit 0

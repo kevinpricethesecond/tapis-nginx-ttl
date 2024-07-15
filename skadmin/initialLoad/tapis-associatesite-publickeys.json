@@ -1,0 +1,16 @@
+{
+    "secrets": {
+        "jwtpublic":[
+                        {
+                "tenant":     "admin",
+                "user":       "bozo",
+                "secretName": "keys",
+                "kubeSecretName": "tapis-associatesite-publickeys"
+            },                        {
+                "tenant":     "dev",
+                "user":       "bozo",
+                "secretName": "keys",
+                "kubeSecretName": "tapis-associatesite-publickeys"
+            }                    ]
+    }
+}

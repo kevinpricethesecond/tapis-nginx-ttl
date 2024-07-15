@@ -1,0 +1,17 @@
+
+networks:
+    tapis:
+        name: tapis
+        external: true
+
+
+services:
+    tokens-api:
+        container_name: tokens-api
+        image: tapis/tokens-api:1.6.0
+        volumes:
+            - ./tokens-config.json:/home/tapis/config.json
+        networks:
+            - tapis
+        env_file: 
+            - /home/rocky/tapisrc1-primary-data/tokens/env

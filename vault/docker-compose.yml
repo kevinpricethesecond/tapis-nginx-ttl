@@ -1,0 +1,26 @@
+networks:
+  tapis:
+    name: tapis
+    external: true
+
+services:
+  vault:
+    container_name: vault
+    image: vault:1.8.3
+    command: ['vault','server','-config=/vault/config']
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - 127.0.0.1:8200:8200
+    environment:
+      - VAULT_ADDR=http://0.0.0.0:8200
+    volumes:
+      - ./vault.hcl:/vault/config/vault.hcl
+      - /home/rocky/tapisrc1-primary-data/vault/data:/vault/data
+      - /home/rocky/tapisrc1-primary-data/vault/certs:/vault/certs
+    networks:
+      - tapis
+    healthcheck:
+      # Just waiting for status to actually give output
+      test: vault status | grep Value
+

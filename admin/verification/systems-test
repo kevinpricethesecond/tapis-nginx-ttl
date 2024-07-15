@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source functions
+gettoken
+
+curl https://dev.rc1.tapis.io/v3/systems/healthcheck | jq 
+

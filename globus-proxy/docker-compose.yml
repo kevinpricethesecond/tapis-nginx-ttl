@@ -1,0 +1,14 @@
+networks:
+  tapis:
+    name: tapis
+    external: true
+
+services:
+  globus-proxy: 
+    container_name: globus-proxy
+    image: tapis/globus-proxy:1.6.2
+    networks:
+      - tapis
+    volumes:
+      - ./globus-proxy-config.json:/home/tapis/config.json
+

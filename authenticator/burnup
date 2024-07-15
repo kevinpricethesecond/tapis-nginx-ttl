@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo "burnup authenticator:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/authenticator
+mkdir -p /home/rocky/tapisrc1-primary-data/authenticator/postgres
+mkdir -p /home/rocky/tapisrc1-primary-data/authenticator/api
+mkdir -p /home/rocky/tapisrc1-primary-data/authenticator/ldap
+
+python3 ../admin/util/parse_skexport -c authenticator -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d
+

@@ -1,0 +1,141 @@
+networks:
+    tapis:
+        name: tapis
+        external: true
+
+services:
+  files-rabbitmq:
+    container_name: files-rabbitmq
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=tapisfiles
+      - RABBITMQ_DEFAULT_VHOST=tapisfiles
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/files/env
+    networks: 
+      - tapis
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+
+  files-postgres:
+    container_name: files-postgres
+    image: postgres:11
+    environment:
+     - POSTGRES_USER=tapisfiles
+     - POSTGRES_DATABASE=tapisfiles
+     - PGDATA=/pgdata/data
+    volumes:
+      - /home/rocky/tapisrc1-primary-data/files/postgres:/pgdata
+    networks:
+      - tapis
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/files/env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+
+  files-migrations:
+    container_name: files-migrations
+    image: postgres:11
+    depends_on:
+      files-postgres:
+        condition: service_healthy
+    volumes:
+      - ./files-init-db-sh:/files-init-db-sh
+    networks:
+      - tapis
+    command: chmod +x files-init-db-sh; /files-init-db-sh
+
+  # files-minio:
+  #   container_name: files-minio
+  #   image: minio/minio
+  #   command: server /data
+  #   environment:
+  #     - MINIO_ACCESS_KEY=user
+  #     - MINIO_SECRET_KEY=password
+  #   volumes:
+  #     - /home/rocky/tapisrc1-primary-data/files/minio:/data
+  #   networks:
+  #     - tapis
+  #   env_file:
+  #     - /home/rocky/tapisrc1-primary-data/files/env
+
+  # files-irods:
+  #   container_name: files-irods
+  #   image: mjstealey/irods-provider-postgres:4.2.4
+  #   networks:
+  #     - tapis
+  #   env_file:
+  #     - /home/rocky/tapisrc1-primary-data/files/env
+
+  files-workers:
+    container_name: files-workers
+    image: tapis/tapis-files-workers:1.6.3
+    networks:
+      - tapis
+    env_file: 
+      - /home/rocky/tapisrc1-primary-data/files/env
+    environment:
+      - TAPIS_LOCAL_NODE_NAME=rc1.tapis.io
+      - TAPIS_SITE_ID=tacc
+      - TOKENS_SERVICE_URL=https://admin.rc1.tapis.io
+      - TENANTS_SERVICE_URL=https://admin.rc1.tapis.io
+      - DB_HOST=files-postgres
+      - DB_NAME=tapisfiles
+      - DB_USERNAME=tapisfiles
+      - POSTGRES_DB=tapisfiles
+      - POSTGRES_USER=tapisfiles
+      - RABBITMQ_DEFAULT_USER=tapisfiles
+      - RABBITMQ_DEFAULT_VHOST=tapisfiles
+      - RABBITMQ_HOSTNAME=files-rabbitmq
+      - RABBITMQ_USERNAME=tapisfiles
+      - RABBITMQ_VHOST=tapisfiles
+    depends_on:
+      files-api: 
+        condition: service_started
+
+  files-api:
+    container_name: files-api
+    image: tapis/tapis-files:1.6.3
+    networks:
+      - tapis
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/files/env
+    environment:
+      - TAPIS_LOCAL_NODE_NAME=rc1.tapis.io
+      - TAPIS_SITE_ID=tacc
+      - TOKENS_SERVICE_URL=https://admin.rc1.tapis.io
+      - TENANTS_SERVICE_URL=https://admin.rc1.tapis.io
+      - DB_HOST=files-postgres
+      - DB_NAME=tapisfiles
+      - DB_USERNAME=tapisfiles
+      - POSTGRES_DB=tapisfiles
+      - POSTGRES_USER=tapisfiles
+      - RABBITMQ_DEFAULT_USER=tapisfiles
+      - RABBITMQ_DEFAULT_VHOST=tapisfiles
+      - RABBITMQ_HOSTNAME=files-rabbitmq
+      - RABBITMQ_USERNAME=tapisfiles
+      - RABBITMQ_VHOST=tapisfiles
+      # - JAVA_OPTS=-Xdebug -Xmx3g
+      # - MAIN_CLASS=edu.utexas.tacc.tapis.files.api.FilesApplication
+      # - JOBS_PARMS=-n rdr-alt
+    depends_on:
+      files-postgres:
+        condition: service_healthy
+      files-rabbitmq:
+        condition: service_healthy
+
+  # files-ssh-machine:
+  #   container_name: files-ssh-machine
+  #   build:
+  #     context: ..
+  #     dockerfile: ./deploy/Dockerfile.ssh-machine
+  #   ports:
+  #     - "2222:22"
+
+  # files-ssh-machine2:
+  #   container_name: files-ssh2
+  #   build:
+  #     context: ..
+  #     dockerfile: ./deploy/Dockerfile.ssh-machine
+  #   ports:
+  #     - "2223:22"

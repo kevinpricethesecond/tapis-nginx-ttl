@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "burnup files:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/files
+mkdir -p /home/rocky/tapisrc1-primary-data/files/rabbitmq
+mkdir -p /home/rocky/tapisrc1-primary-data/files/postgres
+mkdir -p /home/rocky/tapisrc1-primary-data/files/minio
+mkdir -p /home/rocky/tapisrc1-primary-data/files/irods
+
+python3 ../admin/util/parse_skexport -c files -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d
+

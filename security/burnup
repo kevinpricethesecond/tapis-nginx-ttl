@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "burnup security:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/security
+mkdir -p /home/rocky/tapisrc1-primary-data/security/postgres
+
+python3 ../admin/util/parse_skexport -c security -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d
+

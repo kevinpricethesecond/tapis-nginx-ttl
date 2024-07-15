@@ -1,0 +1,154 @@
+networks:
+    tapis:
+        name: tapis
+        external: true
+
+services:
+  # CHORDS Rails application: nginx + rails + CHORDS rails code
+  streams:
+    container_name: streams-api
+    image: tapis/streams-api:1.6.0
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/streams/env
+    volumes:
+      - ./config-local.json:/home/tapis/config.json
+    networks: 
+      - tapis
+    depends_on:
+      chords-app:
+        condition: service_started
+
+  chords-app:
+    container_name: chords-app
+    image: scleveland/tapis-chords-app:0.9.8.2.3
+    networks:
+      - tapis
+    volumes:
+      - /home/rocky/tapisrc1-primary-data/streams/mysql/data:/var/lib/mysql
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./chords/tapis_chords_start.sh:/chords/chords_start.sh
+      - ./chords/influxdb.yml:/chords/config/influxdb.yml
+      - ./chords/production.rb:/chords/config/environments/production.rb
+      - ./chords/database.yml:/chords/config/database.yml
+    environment:
+      - CHORDS_GUEST_PW=guest
+      - CHORDS_EMAIL_ADDRESS=unknown@gmail.com
+      - CHORDS_EMAIL_PASSWORD=unknown
+      - CHORDS_EMAIL_SERVER=smtp.gmail.com
+      - CHORDS_EMAIL_PORT=587
+      - CHORDS_PORTAL_ADMIN_USER=streams@admin.tapis
+      - CHORDS_PORTAL_ADMIN_PASSWORD=streamsrealtime
+      - GRAFANA_ADMIN_PW=admin
+      - SECRET_KEY_BASE=aaaaaaaaaaa
+      - DB_RETENTION=inf
+      - DOCKER_TAG=1.0
+      - GIT_BRANCH=master
+      - CHORDS_HTTP_PORT=80
+      - GRAFANA_HTTP_PORT=3000
+      - PROXY=
+      - KAPACITOR_ENABLED=false
+      - RAILS_ENV=production
+      - WORKERS=4
+      - INFLUXDB_USERNAME=admin
+      - INFLUXDB_HOST=chords-influxdb
+      - INFLUXDB_ADMIN_USER=admin
+      - CHORDS_MYSQL_SERVICE_HOST=chords-mysql
+      - CHORDS_MYSQL_PORT_3306_TCP_ADDR=chords-mysql
+      - CHORDS_MYSQL_PORT_3306_TCP=tcp://chords-mysql:3306
+      - CHORDS_MYSQL_PORT=tcp://chords-mysql:3306
+      - MYSQL_HOST=chords-mysql
+      - MYSQL_USER=chords_demo_user
+      - CHORDS_MYSQL_USER=chords_demo_user
+      - CHORDS_INFLUXDB_PORT_8086_TCP=tcp://chords-influxdb:8086
+      - CHORDS_INFLUXDB_PORT_8083_TCP_ADDR=chords-influxdb
+      - CHORDS_INFLUXDB_PORT_8083_TCP=tcp://chords-influxdb:8083
+      - CHORDS_INFLUXDB_PORT_8086_TCP_ADDR=chords-influxdb
+      - CHORDS_INFLUXDB_PORT=tcp://chords-influxdb:8086
+      - CHORDS_INFLUXDB_SERVICE_HOST=chords-influxdb2
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/streams/env
+    command: bash -c "chmod a+x chords_start.sh && ./chords_start.sh"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "5"
+    depends_on:
+      chords-influxdb2:
+        condition: service_started
+
+  # Rails mysql database
+  chords-mysql:
+    container_name: chords-mysql
+    image: mysql:5.7
+    networks: 
+      - tapis
+    volumes:
+      - /home/rocky/tapisrc1-primary-data/streams/mysql/data:/var/lib/mysql
+      - /home/rocky/tapisrc1-primary-data/streams/mysql/log:/var/log/mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+      - MYSQL_USER=chords_demo_user
+    env_file:
+      - /home/rocky/tapisrc1-primary-data/streams/env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+
+  chords-influxdb2:
+    container_name: chords-influxdb2
+    image: influxdb:2.1.1-alpine
+    networks: 
+      - tapis
+    volumes:
+      - /home/rocky/tapisrc1-primary-data/streams/influx2/influxdb-data:/var/lib/influxdb
+      - /home/rocky/tapisrc1-primary-data/streams/influx2/influxdb-log:/var/log/influxdb
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=chords_ec_demo
+      - DOCKER_INFLUXDB_INIT_ORG=tapis
+      - DOCKER_INFLUXDB_INIT_BUCKET=streams
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=myawesometapisoken
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    depends_on:
+      chords-mysql:
+        condition: service_healthy
+
+  # Grafana graphing server. It draws data from influxdb.
+  # grafana:
+  #   container_name: chords-grafana
+  #   image: ncareol/grafana:6.0.2
+  #   networks: 
+  #     - tapis
+  #   # Note: GF_ variables are used by grafana, meaning that
+  #   # you should not create your own variables beginning with GF_.
+  #   environment:
+  #     - GF_DEFAULT_INSTANCE_NAME=localhost.localdomain
+  #     - GF_SERVER_HTTP_PORT=3000
+  #     - GF_AUTH_ANONYMOUS_ENABLED=true
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin
+  #     - GF_EMAILS_WELCOME_EMAIL_ON_SIGN_UP=true
+  #     - GF_SMTP_ENABLED=true
+  #     - GF_SMTP_FROM_ADDRESS=unknown@gmail.com
+  #     - GF_SMTP_FROM_NAME=CHORDS Grafana
+  #     - GF_SMTP_HOST=unknown@gmail.com:587
+  #     - GF_SMTP_USER=unknown@gmail.com
+  #     - GF_SMTP_PASSWORD=unknown
+  #   volumes:
+  #     - /home/rocky/tapisrc1-primary-data/streams/grafana/data:/var/lib/grafana
+  #     - /home/rocky/tapisrc1-primary-data/streams/grafana/log:/var/log/grafana
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "5"
+  #   user: "104"

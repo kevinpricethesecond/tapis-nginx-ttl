@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo burnup streams
+
+mkdir -p /home/rocky/tapisrc1-primary-data/streams/influx2
+mkdir -p /home/rocky/tapisrc1-primary-data/streams/mysql/data
+mkdir -p /home/rocky/tapisrc1-primary-data/streams/grafana/data
+
+export MYUID="$(id -u)"
+export UID_GID="$(id -u):$(id -g)"
+
+docker run -it --rm -v /home/rocky/tapisrc1-primary-data/streams:/streams tapis/ubutil2204:1.6.0 chown $MYUID /streams
+
+python3 ../admin/util/parse_skexport -c streams -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d

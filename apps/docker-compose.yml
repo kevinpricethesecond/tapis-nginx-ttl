@@ -1,0 +1,55 @@
+
+networks:
+    tapis:
+        name: tapis
+        external: true
+
+services:
+    apps-api:
+        container_name: apps-api
+        image: tapis/apps:1.6.2
+        networks:
+            - tapis
+        environment:
+            - TAPIS_DB_JDBC_URL=jdbc:postgresql://apps-postgres:5432/tapisappdb
+            - TAPIS_DB_USER=tapis_app
+            - TAPIS_SITE_ID=tacc
+            - TAPIS_TENANT_SVC_BASEURL=https://admin.rc1.tapis.io
+        env_file:
+            - /home/rocky/tapisrc1-primary-data/apps/env
+        command: java -Xms1g -Xmx4g --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED -cp "apps.jar:dependencies/*" edu.utexas.tacc.tapis.apps.api.AppsApplication
+        depends_on:
+            apps-migrations:
+                condition: service_completed_successfully
+        ports: 
+            - "8081:8080"
+            
+
+    apps-postgres:
+        container_name: apps-postgres
+        image: postgres:12.4
+        networks:
+            - tapis
+        environment:
+            - PGDATA=/pgdata/data
+        env_file:
+            - /home/rocky/tapisrc1-primary-data/apps/env
+        volumes:
+            - /home/rocky/tapisrc1-primary-data/apps/postgres:/pgdata
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+
+    apps-migrations:
+        container_name: apps-migrations
+        image: postgres:12.4
+        networks:
+            - tapis
+        env_file:
+            - /home/rocky/tapisrc1-primary-data/apps/env
+        volumes:
+            - /home/rocky/tapisrc1-primary-data/apps/postgres:/pgdata
+            - ./apps-init-db-sh:/init-db
+        command: bash -c "cp /init-db /local_initdb && echo 100 && chown $(whoami) /local_initdb && echo 200 && chmod +x /local_initdb && echo 300 && /local_initdb"
+        depends_on:
+            apps-postgres:
+                condition: service_healthy

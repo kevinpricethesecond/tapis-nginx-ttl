@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "burnup apps:"
+
+mkdir -p /home/rocky/tapisrc1-primary-data/apps
+mkdir -p /home/rocky/tapisrc1-primary-data/apps/postgres
+
+python3 ../admin/util/parse_skexport -c apps -d /home/rocky/tapisrc1-primary-data
+
+docker compose up -d
+

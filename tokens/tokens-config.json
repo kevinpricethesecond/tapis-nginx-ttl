@@ -1,0 +1,10 @@
+{
+    "service_name": "tokens",
+    "primary_site_admin_tenant_base_url": "https://admin.rc1.tapis.io",
+    "service_site_id": "tacc",
+    "service_tenant_id": "admin",
+    "tenants": ["*"],
+    "log_level": "INFO",
+    "use_allservices_password": false,
+    "use_sk": true
+}
