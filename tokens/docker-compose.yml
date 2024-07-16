@@ -14,4 +14,4 @@ services:
         networks:
             - tapis
         env_file: 
-            - /home/rocky/tapisrc1-primary-data/tokens/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/tokens/env

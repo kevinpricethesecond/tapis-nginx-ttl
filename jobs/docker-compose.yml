@@ -25,7 +25,7 @@ services:
             - TAPIS_REQUEST_LOGGING_INGORE_SUFFIXES=/healthcheck;/ready;/hello
             - CATALINA_OPTS=-Xms1g -Xmx3g --add-opens java.base/java.time=ALL-UNNAMED
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         depends_on:
             jobs-migrations:
                 condition: service_completed_successfully
@@ -42,9 +42,9 @@ services:
         environment:
             - PGDATA=/pgdata/data
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         volumes:
-            - /home/rocky/tapisrc1-primary-data/jobs/postgres:/pgdata
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/postgres:/pgdata
         healthcheck:
             test: pg_isready -U postgres
     
@@ -58,7 +58,7 @@ services:
             - PORT=5432
             - USER=postgres
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         depends_on:
             jobs-postgres:
                 condition: service_healthy
@@ -69,9 +69,9 @@ services:
     #     environment:
     #         - PGDATA=/pgdata/data
     #     env_file:
-    #         - /home/rocky/tapisrc1-primary-data/jobs/env
+    #         - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
     #     volumes:
-    #         - /home/rocky/tapisrc1-primary-data/jobs/jobs-pg-data:/pgdata
+    #         - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/jobs-pg-data:/pgdata
 
     jobs-rabbitmq:
         container_name: jobs-rabbitmq
@@ -82,9 +82,9 @@ services:
             - RABBITMQ_DEFAULT_USER=tapis
             - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=2147483648
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         volumes:
-            - /home/rocky/tapisrc1-primary-data/jobs/jobs-rabbitmq-data:/var/lib/rabbitmq/mnesia
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/jobs-rabbitmq-data:/var/lib/rabbitmq/mnesia
         networks:
             - tapis
         healthcheck:
@@ -109,7 +109,7 @@ services:
             - MAIN_CLASS=edu.utexas.tacc.tapis.jobs.reader.AltQueueReader
             - JOBS_PARMS=-n rdr-alt
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         depends_on:
             jobs-migrations:
                 condition: service_completed_successfully
@@ -133,7 +133,7 @@ services:
             - MAIN_CLASS=edu.utexas.tacc.tapis.jobs.reader.RecoveryReader
             - JOBS_PARMS=-n rdr-recovery
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         networks: 
             - tapis
         depends_on:
@@ -159,7 +159,7 @@ services:
             - MAIN_CLASS=edu.utexas.tacc.tapis.jobs.reader.DeadLetterReader
             - JOBS_PARMS=-n rdr-dead
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         networks: 
             - tapis
         depends_on:
@@ -185,7 +185,7 @@ services:
             - MAIN_CLASS=edu.utexas.tacc.tapis.jobs.reader.EventReader
             - JOBS_PARMS=-n rdr-event
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         networks: 
             - tapis
         depends_on:
@@ -212,7 +212,7 @@ services:
             - MAIN_CLASS=edu.utexas.tacc.tapis.jobs.worker.JobWorker
             - JOBS_PARMS=-n wkr-DefaultQueue -q tapis.jobq.submit.DefaultQueue -w 100
         env_file:
-            - /home/rocky/tapisrc1-primary-data/jobs/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/jobs/env
         networks:
             - tapis
         depends_on:

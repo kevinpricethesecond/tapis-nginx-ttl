@@ -2,7 +2,7 @@
 
 echo "burnup skadmin:"
 
-mkdir -p /home/rocky/tapisrc1-primary-data/skadmin
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin
 
 # TODO
 # check if skadmin is already done
@@ -19,27 +19,27 @@ then
 fi
 
 # check if skadmin is already done
-if [ -f /home/rocky/tapisrc1-primary-data/skadmin/env ]
+if [ -f /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env ]
 then
-  if [ -s /home/rocky/tapisrc1-primary-data/skadmin/env ]
+  if [ -s /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env ]
   then
-    echo "/home/rocky/tapisrc1-primary-data/skadmin/env is populated, so we assume skadmin is done. Skipping the rest of skadmin burnup."
+    echo "/home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env is populated, so we assume skadmin is done. Skipping the rest of skadmin burnup."
     exit 0
   fi
 fi
 
 # mv skadmin env file out of the way if it is empty 
-if [ -f /home/rocky/tapisrc1-primary-data/skadmin/env ]
+if [ -f /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env ]
 then
-  if [ $(wc -l < "/home/rocky/tapisrc1-primary-data/skadmin/env") -lt 2 ]
+  if [ $(wc -l < "/home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env") -lt 2 ]
   then
-    echo "WARN: /home/rocky/tapisrc1-primary-data/skadmin/env is present but empty. Moving it out of the way."
-    mv /home/rocky/tapisrc1-primary-data/skadmin/env /home/rocky/tapisrc1-primary-data/skadmin/env.bak 
+    echo "WARN: /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env is present but empty. Moving it out of the way."
+    mv /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env.bak 
   fi
 fi
 
 
-export VAULT_TOKEN=`cat /home/rocky/tapisrc1-primary-data/vault/vault-token`
+export VAULT_TOKEN=`cat /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-token`
 export SKEXPORT_PARMS="-vtok $VAULT_TOKEN -vurl http://vault:8200 -noskip"
 
 # create vault roles and policies
@@ -75,5 +75,5 @@ docker run --name skadmin-init -it --rm --net tapis --env VAULT_ROLEID --env VAU
 tapis/securityadmin:1.6.2 /tmp/run-sk-admin
 
 # export tapis passwords to env file
-docker run --name skadmin-export -it --rm --net tapis --env SKEXPORT_PARMS tapis/securityexport:1.6.2 > /home/rocky/tapisrc1-primary-data/skadmin/env
+docker run --name skadmin-export -it --rm --net tapis --env SKEXPORT_PARMS tapis/securityexport:1.6.2 > /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env
 

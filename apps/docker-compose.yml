@@ -16,7 +16,7 @@ services:
             - TAPIS_SITE_ID=tacc
             - TAPIS_TENANT_SVC_BASEURL=https://admin.rc1.tapis.io
         env_file:
-            - /home/rocky/tapisrc1-primary-data/apps/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/apps/env
         command: java -Xms1g -Xmx4g --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED -cp "apps.jar:dependencies/*" edu.utexas.tacc.tapis.apps.api.AppsApplication
         depends_on:
             apps-migrations:
@@ -33,9 +33,9 @@ services:
         environment:
             - PGDATA=/pgdata/data
         env_file:
-            - /home/rocky/tapisrc1-primary-data/apps/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/apps/env
         volumes:
-            - /home/rocky/tapisrc1-primary-data/apps/postgres:/pgdata
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/apps/postgres:/pgdata
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
 
@@ -45,9 +45,9 @@ services:
         networks:
             - tapis
         env_file:
-            - /home/rocky/tapisrc1-primary-data/apps/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/apps/env
         volumes:
-            - /home/rocky/tapisrc1-primary-data/apps/postgres:/pgdata
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/apps/postgres:/pgdata
             - ./apps-init-db-sh:/init-db
         command: bash -c "cp /init-db /local_initdb && echo 100 && chown $(whoami) /local_initdb && echo 200 && chmod +x /local_initdb && echo 300 && /local_initdb"
         depends_on:

@@ -16,8 +16,8 @@ services:
       - VAULT_ADDR=http://0.0.0.0:8200
     volumes:
       - ./vault.hcl:/vault/config/vault.hcl
-      - /home/rocky/tapisrc1-primary-data/vault/data:/vault/data
-      - /home/rocky/tapisrc1-primary-data/vault/certs:/vault/certs
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/data:/vault/data
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/certs:/vault/certs
     networks:
       - tapis
     healthcheck:

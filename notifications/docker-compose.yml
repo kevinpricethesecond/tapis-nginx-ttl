@@ -19,7 +19,7 @@ services:
       - TAPIS_QUEUE_ADMIN_USER=tapis
       - TAPIS_QUEUE_USER=notif
     env_file:
-      - /home/rocky/tapisrc1-primary-data/notifications/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/env
     networks: 
       - tapis
     depends_on:
@@ -38,7 +38,7 @@ services:
     volumes:
       - ./notifications-init-db-sh:/tmp/notifications-init-db-sh
     env_file:
-      - /home/rocky/tapisrc1-primary-data/notifications/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/env
     networks: 
       - tapis
     depends_on:
@@ -51,11 +51,11 @@ services:
     environment:
       - PGDATA=/pgdata/data
     env_file:
-      - /home/rocky/tapisrc1-primary-data/notifications/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/env
     networks: 
       - tapis
     volumes:
-      - /home/rocky/tapisrc1-primary-data/notifications/postgres:/pgdata
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/postgres:/pgdata
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
 
@@ -65,7 +65,7 @@ services:
 #    environment:
 #      - PGADMIN_DEFAULT_EMAIL=wow@example.com
 #    env_file:
-#      - /home/rocky/tapisrc1-primary-data/notifications/env
+#      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/env
 #    networks:
 #      - tapis
 #    depends_on:
@@ -86,7 +86,7 @@ services:
       - TAPIS_QUEUE_ADMIN_USER=tapis
       - TAPIS_QUEUE_USER=notif
     env_file:
-      - /home/rocky/tapisrc1-primary-data/notifications/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/env
     networks:
       - tapis
     command: java -Xms1g -Xmx4g --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED -cp "notifications.jar:dependencies/*" edu.utexas.tacc.tapis.notifications.DispatchApplication
@@ -105,9 +105,9 @@ services:
       - RABBITMQ_DEFAULT_USER=tapis
       - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=2147483648
     env_file: 
-      - /home/rocky/tapisrc1-primary-data/notifications/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/env
     volumes:
-      - /home/rocky/tapisrc1-primary-data/notifications/notifications-rabbitmq-data:/var/lib/rabbitmq/mnesia
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/notifications-rabbitmq-data:/var/lib/rabbitmq/mnesia
     networks:
       - tapis
     healthcheck:

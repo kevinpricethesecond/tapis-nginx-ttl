@@ -12,11 +12,11 @@ services:
         networks:
             - tapis
         volumes:
-            - /home/rocky/tapisrc1-primary-data/security/postgres:/pgdata
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/security/postgres:/pgdata
         environment:
             - PGDATA=/pgdata/data
         env_file:
-            - /home/rocky/tapisrc1-primary-data/security/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/security/env
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
 
@@ -28,7 +28,7 @@ services:
 #            - PGADMIN_DEFAULT_EMAIL=wow@example.com
 #            - PGADMIN_DEFAULT_PASSWORD=password
 #        env_file:
-#            - /home/rocky/tapisrc1-primary-data/security/env
+#            - /home/rocky/tmp/kprice/tapisrc1-primary-data/security/env
 #        networks:
 #            - tapis
 
@@ -40,7 +40,7 @@ services:
             - USER=postgres
         image: tapis/securitymigrate:1.6.2
         env_file:
-            - /home/rocky/tapisrc1-primary-data/security/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/security/env
         networks:
             - tapis
         depends_on:
@@ -64,7 +64,7 @@ services:
             - TAPIS_LOG_DIRECTORY=/opt/tomcat/logs
             - CATALINA_OPTS=-Xms3G -Xmx3G --add-opens java.base/java.time=ALL-UNNAMED
         env_file:
-            - /home/rocky/tapisrc1-primary-data/security/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/security/env
         networks:
             - tapis
         depends_on:

@@ -15,7 +15,7 @@ services:
     volumes:
       - ./meta-config.yml:/opt/restheart/etc/config.properties
     env_file:
-      - /home/rocky/tapisrc1-primary-data/meta/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/meta/env
 
   restheart-security:
     image: tapis/metaapi:1.6.1
@@ -30,7 +30,7 @@ services:
       - TAPIS_META_CORE_SERVER=http://restheart:8080/
       - CATALINA_OPTS=-Dlogback.configurationFile=/usr/local/tomcat/etc/logback.xml --add-opens java.base/java.time=ALL-UNNAMED
     env_file:
-      - /home/rocky/tapisrc1-primary-data/meta/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/meta/env
 
 
   restheart-mongo:
@@ -43,9 +43,9 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=restheart
       - MONGO_REPLICA_SET_NAME=rs0
     env_file:
-      - /home/rocky/tapisrc1-primary-data/meta/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/meta/env
     volumes:
-      -  /home/rocky/tapisrc1-primary-data/meta/mongodb/data:/data/db
+      -  /home/rocky/tmp/kprice/tapisrc1-primary-data/meta/mongodb/data:/data/db
       - ./initdb.sh:/home/tapis/initdb.sh
       - ./initdb.py:/home/tapis/initdb/py
     entrypoint: 

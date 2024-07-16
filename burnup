@@ -29,7 +29,7 @@ burnup_or_exit () {
 
 echo "Start: top-level-burnup"
 
-mkdir -p /home/rocky/tapisrc1-primary-data
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data
 
 ### Docker-specific setup 
 if ! docker network inspect tapis >& /dev/null

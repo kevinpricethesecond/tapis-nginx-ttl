@@ -2,9 +2,9 @@
 
 echo "burnup notifications:"
 
-mkdir -p /home/rocky/tapisrc1-primary-data/notifications
-mkdir -p /home/rocky/tapisrc1-primary-data/notifications/postgres
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/notifications/postgres
 
-python3 ../admin/util/parse_skexport -c notifications -d /home/rocky/tapisrc1-primary-data
+python3 ../admin/util/parse_skexport -c notifications -d /home/rocky/tmp/kprice/tapisrc1-primary-data
 
 docker compose up -d

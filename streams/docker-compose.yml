@@ -9,7 +9,7 @@ services:
     container_name: streams-api
     image: tapis/streams-api:1.6.0
     env_file:
-      - /home/rocky/tapisrc1-primary-data/streams/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/env
     volumes:
       - ./config-local.json:/home/tapis/config.json
     networks: 
@@ -24,7 +24,7 @@ services:
     networks:
       - tapis
     volumes:
-      - /home/rocky/tapisrc1-primary-data/streams/mysql/data:/var/lib/mysql
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/mysql/data:/var/lib/mysql
       - /var/run/docker.sock:/var/run/docker.sock
       - ./chords/tapis_chords_start.sh:/chords/chords_start.sh
       - ./chords/influxdb.yml:/chords/config/influxdb.yml
@@ -66,7 +66,7 @@ services:
       - CHORDS_INFLUXDB_PORT=tcp://chords-influxdb:8086
       - CHORDS_INFLUXDB_SERVICE_HOST=chords-influxdb2
     env_file:
-      - /home/rocky/tapisrc1-primary-data/streams/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/env
     command: bash -c "chmod a+x chords_start.sh && ./chords_start.sh"
     logging:
       driver: "json-file"
@@ -84,13 +84,13 @@ services:
     networks: 
       - tapis
     volumes:
-      - /home/rocky/tapisrc1-primary-data/streams/mysql/data:/var/lib/mysql
-      - /home/rocky/tapisrc1-primary-data/streams/mysql/log:/var/log/mysql
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/mysql/data:/var/lib/mysql
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/mysql/log:/var/log/mysql
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
       - MYSQL_USER=chords_demo_user
     env_file:
-      - /home/rocky/tapisrc1-primary-data/streams/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/env
     logging:
       driver: "json-file"
       options:
@@ -105,8 +105,8 @@ services:
     networks: 
       - tapis
     volumes:
-      - /home/rocky/tapisrc1-primary-data/streams/influx2/influxdb-data:/var/lib/influxdb
-      - /home/rocky/tapisrc1-primary-data/streams/influx2/influxdb-log:/var/log/influxdb
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/influx2/influxdb-data:/var/lib/influxdb
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/influx2/influxdb-log:/var/log/influxdb
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=admin
@@ -144,8 +144,8 @@ services:
   #     - GF_SMTP_USER=unknown@gmail.com
   #     - GF_SMTP_PASSWORD=unknown
   #   volumes:
-  #     - /home/rocky/tapisrc1-primary-data/streams/grafana/data:/var/lib/grafana
-  #     - /home/rocky/tapisrc1-primary-data/streams/grafana/log:/var/log/grafana
+  #     - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/grafana/data:/var/lib/grafana
+  #     - /home/rocky/tmp/kprice/tapisrc1-primary-data/streams/grafana/log:/var/log/grafana
   #   logging:
   #     driver: "json-file"
   #     options:

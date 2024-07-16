@@ -4,12 +4,12 @@ echo "burnup vault:"
 
 
 
-mkdir -p /home/rocky/tapisrc1-primary-data/vault/data
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/data
 
 MYUID=`id -u`
-docker run -it --rm -v /home/rocky/tapisrc1-primary-data/vault:/vault tapis/ubutil2204:1.6.0 chown $MYUID /vault
+docker run -it --rm -v /home/rocky/tmp/kprice/tapisrc1-primary-data/vault:/vault tapis/ubutil2204:1.6.0 chown $MYUID /vault
 
-docker run -it --rm -v /home/rocky/tapisrc1-primary-data/vault:/vault vault:1.8.3 chown -R 100:1000 /vault/data
+docker run -it --rm -v /home/rocky/tmp/kprice/tapisrc1-primary-data/vault:/vault vault:1.8.3 chown -R 100:1000 /vault/data
 
 docker compose up -d
 if [ $? -ne 0 ]
@@ -53,49 +53,49 @@ fi
 
 
 # only do this step once if vault is not initialized
-if [ ! -f /home/rocky/tapisrc1-primary-data/vault/vault-init ]
+if [ ! -f /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init ]
 then
   echo
-  echo "# WARNING! Important 1-time-only Vault information stored in /home/rocky/tapisrc1-primary-data/vault/vault-init . If you lose it, your Vault may be locked forever!"
+  echo "# WARNING! Important 1-time-only Vault information stored in /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init . If you lose it, your Vault may be locked forever!"
   echo
   pod='vault'
-  docker exec -it $pod vault operator init | sed 's/\x1b\[[0-9;]*m//g' | tr -d "\r" >& /home/rocky/tapisrc1-primary-data/vault/vault-init
-  cat /home/rocky/tapisrc1-primary-data/vault/vault-init
-  # chmod 400 /home/rocky/tapisrc1-primary-data/vault/vault-init
+  docker exec -it $pod vault operator init | sed 's/\x1b\[[0-9;]*m//g' | tr -d "\r" >& /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init
+  cat /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init
+  # chmod 400 /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init
 fi
 
 # sanity check vault-init is non-zero bytes
-if [ ! -s /home/rocky/tapisrc1-primary-data/vault/vault-init ]
+if [ ! -s /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init ]
 then
-  echo "# WARNING! /home/rocky/tapisrc1-primary-data/vault/vault-init exists but is zero bytes. Please fix and re-run."
+  echo "# WARNING! /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init exists but is zero bytes. Please fix and re-run."
   exit 1
 fi
 
 # sanity check vault-init has initial root token 
-grep "Initial Root Token" /home/rocky/tapisrc1-primary-data/vault/vault-init >& /dev/null
+grep "Initial Root Token" /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init >& /dev/null
 if [ $? -ne 0 ]
 then
-  echo "# WARNING! Could not find Initial Root Token in /home/rocky/tapisrc1-primary-data/vault/vault-init. Please fix and re-run."
+  echo "# WARNING! Could not find Initial Root Token in /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init. Please fix and re-run."
   exit 1
 fi
 
 # sanity check vault-init has unseal keys
-grep "Unseal Key" /home/rocky/tapisrc1-primary-data/vault/vault-init >& /dev/null
+grep "Unseal Key" /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init >& /dev/null
 if [ $? -ne 0 ]
 then   
-  echo "# WARNING! Could not find Unseal Key(s) in /home/rocky/tapisrc1-primary-data/vault/vault-init. Please fix and re-run."
+  echo "# WARNING! Could not find Unseal Key(s) in /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init. Please fix and re-run."
   exit 1
 fi
 
-if [ ! -f /home/rocky/tapisrc1-primary-data/vault/vault-token ]
+if [ ! -f /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-token ]
 then
-  grep "Initial Root Token" /home/rocky/tapisrc1-primary-data/vault/vault-init | awk -F: '{print $2}' | tr -d " \t\n\r" > /home/rocky/tapisrc1-primary-data/vault/vault-token
-  chmod 400 /home/rocky/tapisrc1-primary-data/vault/vault-token
+  grep "Initial Root Token" /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init | awk -F: '{print $2}' | tr -d " \t\n\r" > /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-token
+  chmod 400 /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-token
 fi
 
-u1=`grep '^Unseal Key 1:' /home/rocky/tapisrc1-primary-data/vault/vault-init | awk '{print $4}'`
-u2=`grep '^Unseal Key 2:' /home/rocky/tapisrc1-primary-data/vault/vault-init | awk '{print $4}'`
-u3=`grep '^Unseal Key 3:' /home/rocky/tapisrc1-primary-data/vault/vault-init | awk '{print $4}'`
+u1=`grep '^Unseal Key 1:' /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init | awk '{print $4}'`
+u2=`grep '^Unseal Key 2:' /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init | awk '{print $4}'`
+u3=`grep '^Unseal Key 3:' /home/rocky/tmp/kprice/tapisrc1-primary-data/vault/vault-init | awk '{print $4}'`
 
 # if vault sealed, unseal it 
 if [ `docker exec -it vault vault status -format=json | jq -r .sealed` == "true" ]

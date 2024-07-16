@@ -10,7 +10,7 @@ services:
         networks:
             - tapis
         env_file:
-            /home/rocky/tapisrc1-primary-data/systems/env
+            /home/rocky/tmp/kprice/tapisrc1-primary-data/systems/env
         environment:
             - TAPIS_DB_JDBC_URL=jdbc:postgresql://systems-postgres:5432/tapissysdb
             - TAPIS_SITE_ID=tacc
@@ -30,11 +30,11 @@ services:
         networks:
             - tapis
         env_file:
-            /home/rocky/tapisrc1-primary-data/systems/env
+            /home/rocky/tmp/kprice/tapisrc1-primary-data/systems/env
         environment:
             - PGDATA=/pgdata/data
         volumes:
-            - /home/rocky/tapisrc1-primary-data/systems/postgres:/pgdata
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/systems/postgres:/pgdata
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U postgres"]
 
@@ -46,7 +46,7 @@ services:
         volumes:
             - ./systems-init-db-sh:/init-db
         env_file:
-            /home/rocky/tapisrc1-primary-data/systems/env
+            /home/rocky/tmp/kprice/tapisrc1-primary-data/systems/env
         command: bash -c "cp /init-db /local_initdb && echo 100 && chown $(whoami) /local_initdb && echo 200 && chmod +x /local_initdb && echo 300 && /local_initdb"
         depends_on:
             systems-postgres:

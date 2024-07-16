@@ -10,7 +10,7 @@ services:
     networks:
         - tapis
     env_file:
-        - /home/rocky/tapisrc1-primary-data/authenticator/env
+        - /home/rocky/tmp/kprice/tapisrc1-primary-data/authenticator/env
     volumes:
         - ./authenticator-config.json:/home/tapis/config.json
     depends_on: 
@@ -33,9 +33,9 @@ services:
         - POSTGRES_DB=authenticator
         - POSTGRES_HOST_AUTH_METHOD=trust
     env_file:
-        - /home/rocky/tapisrc1-primary-data/authenticator/env
+        - /home/rocky/tmp/kprice/tapisrc1-primary-data/authenticator/env
     volumes:
-        - /home/rocky/tapisrc1-primary-data/authenticator/postgres:/pgdata
+        - /home/rocky/tmp/kprice/tapisrc1-primary-data/authenticator/postgres:/pgdata
     healthcheck:
         test: pg_isready -U authenticator
 
@@ -46,7 +46,7 @@ services:
     networks:
         - tapis
     env_file:
-        - /home/rocky/tapisrc1-primary-data/authenticator/env
+        - /home/rocky/tmp/kprice/tapisrc1-primary-data/authenticator/env
     depends_on:
         authenticator-postgres:
             condition: service_healthy
@@ -66,9 +66,9 @@ services:
         - LDAP_DOMAIN=tapis
         - LDAP_ORGANISATION=Tapis
     env_file:
-        - /home/rocky/tapisrc1-primary-data/authenticator/env
+        - /home/rocky/tmp/kprice/tapisrc1-primary-data/authenticator/env
     volumes:
-        - /home/rocky/tapisrc1-primary-data/authenticator/ldap:/data/ldap
+        - /home/rocky/tmp/kprice/tapisrc1-primary-data/authenticator/ldap:/data/ldap
     depends_on:
         authenticator-postgres:
             condition: service_healthy

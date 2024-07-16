@@ -19,13 +19,13 @@ services:
             MONGO_INITDB_ROOT_USERNAME: admin
             MONGO_REPLICA_SET_NAME: rs0
         env_file:
-            - /home/rocky/tapisrc1-primary-data/actors/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/env
         # volumes:
         #     - ./runtime_files/certs:/data/ssl
         #     - ./runtime_files/certs/mongo-replica-set-keyfile:/keyfiles/metakeyfile
         volumes:
-            - /home/rocky/tapisrc1-primary-data/actors/mongo/data:/data/db
-            - /home/rocky/tapisrc1-primary-data/actors/mongo/keyfiles:/keyfiles
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/mongo/data:/data/db
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/mongo/keyfiles:/keyfiles
         networks:
             - tapis
         ulimits:
@@ -58,7 +58,7 @@ services:
             RABBITMQ_DEFAULT_VHOST: abaco_vhost
             RABBITMQ_DEFAULT_USER: admin
         env_file:
-            - /home/rocky/tapisrc1-primary-data/actors/env
+            - /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/env
         ulimits:
             nproc: 65535
             nofile:
@@ -94,7 +94,7 @@ services:
         #     - ./runtime_files/certs:/home/tapis/runtime_files/certs
         environment:
             # abaco_host_path: ${abaco_path}
-            abaco_host_path: "/home/rocky/tapisrc1-primary-data/actors"
+            abaco_host_path: "/home/rocky/tmp/kprice/tapisrc1-primary-data/actors"
             api: reg
             server: gunicorn
             threads: 1
@@ -119,7 +119,7 @@ services:
         #     - "127.0.0.1:5001:5000"
         environment:
             # abaco_host_path: ${abaco_path}
-            abaco_host_path: "/home/rocky/tapisrc1-primary-data/actors"
+            abaco_host_path: "/home/rocky/tmp/kprice/tapisrc1-primary-data/actors"
             server: gunicorn
             api: mes
             threads: 3
@@ -145,7 +145,7 @@ services:
             - "127.0.0.1:5003:5000"
         environment:
             # abaco_host_path: ${abaco_path}
-            abaco_host_path: "/home/rocky/tapisrc1-primary-data/actors"
+            abaco_host_path: "/home/rocky/tmp/kprice/tapisrc1-primary-data/actors"
             server: gunicorn
             api: admin
             threads: 1
@@ -171,7 +171,7 @@ services:
         #     - ./runtime_files/certs:/home/tapis/runtime_files/certs
         environment:
             # abaco_host_path: ${abaco_path}
-            abaco_host_path: "/home/rocky/tapisrc1-primary-data/actors"
+            abaco_host_path: "/home/rocky/tmp/kprice/tapisrc1-primary-data/actors"
             _abaco_secret: 123
             mongo_password:
             TAS_ROLE_ACCT:
@@ -196,7 +196,7 @@ services:
         #     - ./runtime_files/certs:/home/tapis/runtime_files/certs
         environment:
             # abaco_host_path: ${abaco_path}
-            abaco_host_path: "/home/rocky/tapisrc1-primary-data/actors"
+            abaco_host_path: "/home/rocky/tmp/kprice/tapisrc1-primary-data/actors"
             mongo_password:
             TAS_ROLE_ACCT:
             TAS_ROLE_PASS:
@@ -223,7 +223,7 @@ services:
         #     - ./runtime_files/certs:/home/tapis/runtime_files/certs
         environment:
             # abaco_host_path: ${abaco_path}
-            abaco_host_path: "/home/rocky/tapisrc1-primary-data/actors"
+            abaco_host_path: "/home/rocky/tmp/kprice/tapisrc1-primary-data/actors"
             _abaco_secret: 123
             mongo_password:
             TAS_ROLE_ACCT:
@@ -264,7 +264,7 @@ services:
         #     - "127.0.0.1:5004:5000"
         environment:
             # abaco_host_path: ${abaco_path}
-            abaco_host_path: "/home/rocky/tapisrc1-primary-data/actors"
+            abaco_host_path: "/home/rocky/tmp/kprice/tapisrc1-primary-data/actors"
             server: dev
             api: metrics
             threads: 1

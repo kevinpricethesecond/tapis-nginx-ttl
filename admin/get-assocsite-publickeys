@@ -1,4 +1,4 @@
 #!/bin/bash
 
-grep JWTSIGNING_.*_PUBLICKEY /home/rocky/tapisrc1-primary-data/skadmin/env | awk -F= '{print $2}' | sed 's/\\n/\n/g'
+grep JWTSIGNING_.*_PUBLICKEY /home/rocky/tmp/kprice/tapisrc1-primary-data/skadmin/env | awk -F= '{print $2}' | sed 's/\\n/\n/g'
 

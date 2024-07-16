@@ -2,12 +2,12 @@
 
 echo "burnup tenants:"
 
-mkdir -p /home/rocky/tapisrc1-primary-data/tenants
-mkdir -p /home/rocky/tapisrc1-primary-data/tenants/postgres
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/tenants
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/tenants/postgres
 
 MYUID=`id -u`
-docker run -it --rm -v /home/rocky/tapisrc1-primary-data/tenants:/tenants tapis/ubutil2204:1.6.0 chown $MYUID /tenants
-python3 ../admin/util/parse_skexport -c tenants -d /home/rocky/tapisrc1-primary-data
+docker run -it --rm -v /home/rocky/tmp/kprice/tapisrc1-primary-data/tenants:/tenants tapis/ubutil2204:1.6.0 chown $MYUID /tenants
+python3 ../admin/util/parse_skexport -c tenants -d /home/rocky/tmp/kprice/tapisrc1-primary-data
 
 docker compose up -d
 

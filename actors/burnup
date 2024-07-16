@@ -2,16 +2,16 @@
 
 echo "burnup actors:"
 
-mkdir -p /home/rocky/tapisrc1-primary-data/actors
-mkdir -p /home/rocky/tapisrc1-primary-data/actors/mongo
-mkdir -p /home/rocky/tapisrc1-primary-data/actors/mongo/keyfile
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/actors
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/mongo
+mkdir -p /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/mongo/keyfile
 
 MYUID=`id -u`
-docker run -it --rm -v /home/rocky/tapisrc1-primary-data/actors:/actors tapis/ubutil2204:1.6.0 chown $MYUID /actors
+docker run -it --rm -v /home/rocky/tmp/kprice/tapisrc1-primary-data/actors:/actors tapis/ubutil2204:1.6.0 chown $MYUID /actors
 
-python3 ../admin/util/parse_skexport -c actors -d /home/rocky/tapisrc1-primary-data
+python3 ../admin/util/parse_skexport -c actors -d /home/rocky/tmp/kprice/tapisrc1-primary-data
 
-cat /home/rocky/tapisrc1-primary-data/actors/env | grep MONGO_INITDB_ROOT_PASSWORD | cut -d'"' -f 2 > /home/rocky/tapisrc1-primary-data/actors/mongo/keyfiles/metakeyfile
+cat /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/env | grep MONGO_INITDB_ROOT_PASSWORD | cut -d'"' -f 2 > /home/rocky/tmp/kprice/tapisrc1-primary-data/actors/mongo/keyfiles/metakeyfile
 
 docker compose up -d
 

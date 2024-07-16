@@ -11,7 +11,7 @@ services:
       - RABBITMQ_DEFAULT_USER=tapisfiles
       - RABBITMQ_DEFAULT_VHOST=tapisfiles
     env_file:
-      - /home/rocky/tapisrc1-primary-data/files/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/env
     networks: 
       - tapis
     healthcheck:
@@ -25,11 +25,11 @@ services:
      - POSTGRES_DATABASE=tapisfiles
      - PGDATA=/pgdata/data
     volumes:
-      - /home/rocky/tapisrc1-primary-data/files/postgres:/pgdata
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/postgres:/pgdata
     networks:
       - tapis
     env_file:
-      - /home/rocky/tapisrc1-primary-data/files/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/env
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
 
@@ -53,11 +53,11 @@ services:
   #     - MINIO_ACCESS_KEY=user
   #     - MINIO_SECRET_KEY=password
   #   volumes:
-  #     - /home/rocky/tapisrc1-primary-data/files/minio:/data
+  #     - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/minio:/data
   #   networks:
   #     - tapis
   #   env_file:
-  #     - /home/rocky/tapisrc1-primary-data/files/env
+  #     - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/env
 
   # files-irods:
   #   container_name: files-irods
@@ -65,7 +65,7 @@ services:
   #   networks:
   #     - tapis
   #   env_file:
-  #     - /home/rocky/tapisrc1-primary-data/files/env
+  #     - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/env
 
   files-workers:
     container_name: files-workers
@@ -73,7 +73,7 @@ services:
     networks:
       - tapis
     env_file: 
-      - /home/rocky/tapisrc1-primary-data/files/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/env
     environment:
       - TAPIS_LOCAL_NODE_NAME=rc1.tapis.io
       - TAPIS_SITE_ID=tacc
@@ -99,7 +99,7 @@ services:
     networks:
       - tapis
     env_file:
-      - /home/rocky/tapisrc1-primary-data/files/env
+      - /home/rocky/tmp/kprice/tapisrc1-primary-data/files/env
     environment:
       - TAPIS_LOCAL_NODE_NAME=rc1.tapis.io
       - TAPIS_SITE_ID=tacc
