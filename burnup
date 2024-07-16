@@ -61,15 +61,19 @@ burnup_or_exit authenticator
 
 ### secondary services
 
-burnup_or_exit notifications
+burnup_or_exit systems
+
+## debug 
+exit 0
 
 burnup_or_exit jobs  
 
 burnup_or_exit files
 
-burnup_or_exit systems
-
 burnup_or_exit apps
+
+burnup_or_exit notifications
+
 
 ## tertiary services
 
