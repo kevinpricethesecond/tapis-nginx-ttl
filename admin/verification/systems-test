@@ -3,5 +3,9 @@
 source functions
 gettoken
 
+## healthcheck
 curl https://dev.rc1.tapis.io/v3/systems/healthcheck | jq 
+
+## list systems
+curl -H X-Tapis-Token:$tok https://dev.rc1.tapis.io/v3/systems 
 
